@@ -1,63 +1,113 @@
+# library_system.py
+
 class Book:
-    def __init__(self, title, author):
+    """
+    Base class for all books in the library system.
+    Defines common attributes like title and author.
+    """
+    def __init__(self, title: str, author: str):
+        """
+        Initializes a new Book instance.
+
+        Args:
+            title (str): The title of the book.
+            author (str): The author of the book.
+        """
         self.title = title
         self.author = author
 
+    def get_details(self) -> str:
+        """
+        Returns a string with the common details of the book.
+        This method will be extended by derived classes.
+        """
+        return f"{self.title} by {self.author}"
+
 class EBook(Book):
-    def __init__(self, title, author, file_size):
+    """
+    Derived class for electronic books.
+    Inherits from Book and adds a file_size attribute.
+    """
+    def __init__(self, title: str, author: str, file_size: int):
+        """
+        Initializes a new EBook instance.
+
+        Args:
+            title (str): The title of the e-book.
+            author (str): The author of the e-book.
+            file_size (int): The file size of the e-book in KB.
+        """
+        # Call the base class (Book) constructor
         super().__init__(title, author)
         self.file_size = file_size
 
+    def get_details(self) -> str:
+        """
+        Overrides the base class method to include e-book specific details.
+        """
+        return f"EBook: {super().get_details()}, File Size: {self.file_size}KB"
+
 class PrintBook(Book):
-    def __init__(self, title, author, page_count):
+    """
+    Derived class for physical print books.
+    Inherits from Book and adds a page_count attribute.
+    """
+    def __init__(self, title: str, author: str, page_count: int):
+        """
+        Initializes a new PrintBook instance.
+
+        Args:
+            title (str): The title of the print book.
+            author (str): The author of the print book.
+            page_count (int): The number of pages in the print book.
+        """
+        # Call the base class (Book) constructor
         super().__init__(title, author)
         self.page_count = page_count
 
+    def get_details(self) -> str:
+        """
+        Overrides the base class method to include print book specific details.
+        """
+        return f"PrintBook: {super().get_details()}, Page Count: {self.page_count}"
+
 class Library:
+    """
+    Represents a library that manages a collection of books.
+    Demonstrates composition by holding a list of Book objects.
+    """
     def __init__(self):
+        """
+        Initializes a new Library instance with an empty list of books.
+        """
         self.books = []
 
-    def add_book(self, book):
-        if isinstance(book, Book):
-            self.books.append(book)
-            print(f"Added '{book.title}' to the library.")
-        else:
-            print("Invalid object. Only Book, EBook, or PrintBook instances can be added.")
+    def add_book(self, book: Book):
+        """
+        Adds a book (Book, EBook, or PrintBook instance) to the library's collection.
+
+        Args:
+            book (Book): An instance of Book or one of its derived classes.
+        """
+        self.books.append(book)
+        print(f"Added '{book.title}' to the library.")
 
     def list_books(self):
+        """
+        Prints the details of all books currently in the library.
+        It leverages the polymorphic `get_details()` method of each book.
+        """
+        print("\n--- Books in the Library ---")
         if not self.books:
-            print("The library is empty.")
+            print("The library is currently empty.")
             return
 
-        print("\n--- Library Collection ---")
         for book in self.books:
+            # Use type checking to display specific output for base Book class
             if isinstance(book, EBook):
-                print(f"EBook: '{book.title}' by {book.author}, File Size: {book.file_size}KB")
+                print(book.get_details())
             elif isinstance(book, PrintBook):
-                print(f"PrintBook: '{book.title}' by {book.author}, Page Count: {book.page_count}")
+                print(book.get_details())
             elif isinstance(book, Book):
-                print(f"Book: '{book.title}' by {book.author}")
-        print("--------------------------")
-
-# # Example Usage (for testing purposes, you can put this in a separate main.py or directly below)
-# if __name__ == "__main__":
-#     my_library = Library()
-
-#     book1 = Book("The Great Gatsby", "F. Scott Fitzgerald")
-#     ebook1 = EBook("Dune", "Frank Herbert", 2048)
-#     printbook1 = PrintBook("To Kill a Mockingbird", "Harper Lee", 320)
-#     ebook2 = EBook("Neuromancer", "William Gibson", 1500)
-
-#     my_library.add_book(book1)
-#     my_library.add_book(ebook1)
-#     my_library.add_book(printbook1)
-#     my_library.add_book(ebook2)
-
-#     # Attempt to add an invalid object
-#     # my_library.add_book("Not a book")
-
-#     my_library.list_books()
-
-#     # Demonstrate an empty library
-#     empty_library = Library()
-#     empty_library.list_books()
+                # For the base Book class, format it as "Book: Title by Author"
+                print(f"Book: {book.get_details()}")
